@@ -106,6 +106,14 @@ module:hook("iq-get/bare/"..xmlns_mam..":query", function(event)
 	return true;
 end);
 
+
+if rawget(_G, "setfenv") == nil then
+	rawset(_G, "setfenv", false)
+end
+if rawget(_G, "getfenv") == nil then
+	rawset(_G, "getfenv", false)
+end
+
 -- Handle archive queries
 module:hook("iq-set/bare/"..xmlns_mam..":query", function(event)
 	local origin, stanza = event.origin, event.stanza;
@@ -184,6 +192,7 @@ module:hook("iq-set/bare/"..xmlns_mam..":query", function(event)
 	local msg_reply_attr = { to = stanza.attr.from, from = stanza.attr.to };
 
 	local results = {};
+	require("mobdebug").start()
 
 	-- Wrap it in stuff and deliver
 	local first, last;
@@ -212,6 +221,7 @@ module:hook("iq-set/bare/"..xmlns_mam..":query", function(event)
 		if not is_stanza(item) then
 			item = st.deserialize(item);
 		end
+		require("mobdebug").start()
 		item.attr.to = nil;
 		item.attr.xmlns = "jabber:client";
 		fwd_st:add_child(item);
